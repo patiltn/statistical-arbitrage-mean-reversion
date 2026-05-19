@@ -82,3 +82,22 @@ data/
 figures/
 notebooks/
 src/
+## Sample Visualisations
+
+### Mean Reversion Z-Score
+
+![Z-score](figures/zscore_spread_GOOG_MSFT.png)
+
+### Statistical Arbitrage Backtest
+
+![Backtest](figures/backtest_returns.png)
+
+## Skills Demonstrated
+
+- Statistical Arbitrage
+- Time-Series Analysis
+- Cointegration Testing
+- Regression Modelling
+- Quantitative Backtesting
+- Risk Metrics (Sharpe Ratio, Drawdown, Volatility)
+- Python (Pandas, NumPy, Statsmodels, Matplotlib)

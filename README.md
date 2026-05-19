@@ -43,7 +43,7 @@ For each pair:
 - Hedge ratio estimated using OLS regression
 - Spread constructed:
 
-spread = y - βx
+spread = y - beta*x
 
 - Rolling z-score computed
 - Trading signals generated:
@@ -73,15 +73,15 @@ Performance evaluated using:
 
 Best-performing pair:
 
-**AAPL – GOOG**
+**AAPL - GOOG**
 
 ## Repository Structure
 
-```text
-data/
-figures/
-notebooks/
+data/  
+figures/  
+notebooks/  
 src/
+
 ## Sample Visualisations
 
 ### Mean Reversion Z-Score
@@ -99,5 +99,11 @@ src/
 - Cointegration Testing
 - Regression Modelling
 - Quantitative Backtesting
-- Risk Metrics (Sharpe Ratio, Drawdown, Volatility)
-- Python (Pandas, NumPy, Statsmodels, Matplotlib)
+- Risk Metrics: Sharpe Ratio, Drawdown, Volatility
+- Python: Pandas, NumPy, Statsmodels, Matplotlib
+
+## Key Insight
+
+High correlation alone does not imply a profitable statistical arbitrage opportunity.
+
+Cointegration testing and hedge-ratio estimation significantly improve pair selection and modelling quality.

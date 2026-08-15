@@ -2,8 +2,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def compute_zscore(series):
-    return (series - series.mean()) / series.std()
+def compute_zscore(series, window=30):
+    """
+    Rolling z-score, consistent with backtest.py. The original version
+    used the full-sample mean and std, which means the z-score at an
+    early date was influenced by data from years in the future -- not
+    something a real trader would have known at the time.
+    """
+    rolling_mean = series.rolling(window).mean()
+    rolling_std = series.rolling(window).std()
+
+    return (series - rolling_mean) / rolling_std
 
 
 if __name__ == "__main__":

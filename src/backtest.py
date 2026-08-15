@@ -11,6 +11,36 @@ def compute_zscore(series):
     return (series - rolling_mean) / rolling_std
 
 
+def compute_signals(zscore, entry=2.0, exit=0.5):
+    """
+    Generates a position signal that persists between entry and exit,
+    rather than re-evaluating each day independently. A position, once
+    opened, is held until the spread reverts inside the exit band.
+    """
+    signals = pd.Series(index=zscore.index, data=0.0)
+    position = 0
+
+    for t in range(len(zscore)):
+        z = zscore.iloc[t]
+
+        if pd.isna(z):
+            signals.iloc[t] = position
+            continue
+
+        if position == 0:
+            if z > entry:
+                position = -1
+            elif z < -entry:
+                position = 1
+        else:
+            if abs(z) < exit:
+                position = 0
+
+        signals.iloc[t] = position
+
+    return signals
+
+
 def compute_max_drawdown(portfolio):
     running_max = portfolio.cummax()
     drawdown = (
@@ -41,22 +71,28 @@ if __name__ == "__main__":
 
     zscore = compute_zscore(spread)
 
-    signals = pd.Series(index=zscore.index, data=0)
-
-    signals[zscore > 2] = -1
-    signals[zscore < -2] = 1
-    signals[abs(zscore) < 0.5] = 0
+    signals = compute_signals(zscore)
 
     spread_returns = spread.diff()
+
+    # Normalize by position notional (long leg + short leg dollar value)
+    # instead of dividing by a flat constant, so the return is a genuine
+    # percentage regardless of the pair's price scale.
+    notional = y.shift(1).abs() + hedge_ratio * x.shift(1).abs()
 
     strategy_returns = (
         signals.shift(1)
         * spread_returns
+        / notional
     )
 
-    cumulative_returns = (
-        1 + strategy_returns.fillna(0) / 100
-    ).cumprod()
+    strategy_returns = (
+        strategy_returns
+        .replace([np.inf, -np.inf], np.nan)
+        .fillna(0)
+    )
+
+    cumulative_returns = (1 + strategy_returns).cumprod()
 
     sharpe_ratio = (
         strategy_returns.mean()
@@ -70,7 +106,7 @@ if __name__ == "__main__":
     volatility = (
         strategy_returns.std()
         * np.sqrt(252)
-    )
+    ) * 100
 
     max_drawdown = (
         compute_max_drawdown(
@@ -96,5 +132,5 @@ if __name__ == "__main__":
     print(f"Hedge Ratio (β): {hedge_ratio:.4f}")
     print(f"Sharpe Ratio: {sharpe_ratio:.2f}")
     print(f"Total Return: {total_return:.2f}%")
-    print(f"Annual Volatility: {volatility:.2f}")
+    print(f"Annual Volatility: {volatility:.2f}%")
     print(f"Max Drawdown: {max_drawdown:.2f}%")

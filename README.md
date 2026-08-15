@@ -85,7 +85,7 @@ src/
 
 ### Mean Reversion Z-Score
 
-![Z-score](figures/zscore_spread_GOOG_MSFT.png)
+![Z-score](figures/zscore_spread_AAPL_MSFT.png)
 
 ### Statistical Arbitrage Backtest
 

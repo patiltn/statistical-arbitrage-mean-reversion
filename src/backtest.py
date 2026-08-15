@@ -57,8 +57,8 @@ if __name__ == "__main__":
         parse_dates=True
     )
 
-    stock1 = "AMZN"
-    stock2 = "META"
+    stock1 = "AAPL"
+    stock2 = "MSFT"
 
     y = prices[stock1]
     x = prices[stock2]
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     plt.tight_layout()
 
     plt.savefig(
-        "figures/backtest_returns.png"
+        "figures/backtest_returns_AAPL_MSFT.png"
     )
 
     plt.show()

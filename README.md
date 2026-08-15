@@ -89,7 +89,7 @@ src/
 
 ### Statistical Arbitrage Backtest
 
-![Backtest](figures/backtest_returns.png)
+![Backtest](figures/backtest_returns_AAPL_MSFT.png)
 
 ## Skills Demonstrated
 

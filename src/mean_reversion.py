@@ -18,7 +18,7 @@ def compute_zscore(series, window=30):
 if __name__ == "__main__":
     prices = pd.read_csv("data/stock_prices.csv", index_col=0, parse_dates=True)
 
-    stock1 = "GOOG"
+    stock1 = "AAPL"
     stock2 = "MSFT"
 
     spread = prices[stock1] - prices[stock2]
@@ -35,5 +35,5 @@ if __name__ == "__main__":
     plt.ylabel("Z-score")
     plt.tight_layout()
 
-    plt.savefig("figures/zscore_spread_GOOG_MSFT.png")
+    plt.savefig("figures/zscore_spread_AAPL_MSFT.png")
     plt.show()

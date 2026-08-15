@@ -66,17 +66,16 @@ Performance evaluated using:
 ## Results
 
 | Pair | Sharpe Ratio | Total Return |
-|------|--------------|--------------|
-| AAPL-GOOG | 0.56 | 82.67% |
-| AAPL-AMZN | 0.44 | 77.31% |
-| AAPL-META | 0.39 | 44.92% |
+|------|---------------|----------------|
+| AAPL-MSFT | 0.71 | 56.04% |
+| AAPL-AMZN | 0.61 | 60.38% |
+| GOOG-MSFT | 0.31 | 17.88% |
 
 Best-performing pair:
 
-**AAPL - GOOG**
+**AAPL - MSFT**
 
 ## Repository Structure
-
 data/  
 figures/  
 notebooks/  

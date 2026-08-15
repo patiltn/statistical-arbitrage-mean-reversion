@@ -11,6 +11,36 @@ def compute_zscore(series):
     return (series - rolling_mean) / rolling_std
 
 
+def compute_signals(zscore, entry=2.0, exit=0.5):
+    """
+    Position signal that persists between entry and exit rather than
+    resetting to flat whenever the z-score dips back inside the entry
+    band before reaching the actual exit threshold.
+    """
+    signals = pd.Series(index=zscore.index, data=0.0)
+    position = 0
+
+    for t in range(len(zscore)):
+        z = zscore.iloc[t]
+
+        if pd.isna(z):
+            signals.iloc[t] = position
+            continue
+
+        if position == 0:
+            if z > entry:
+                position = -1
+            elif z < -entry:
+                position = 1
+        else:
+            if abs(z) < exit:
+                position = 0
+
+        signals.iloc[t] = position
+
+    return signals
+
+
 def compute_sharpe(strategy_returns):
     std = strategy_returns.std()
 
@@ -40,20 +70,28 @@ def backtest_pair(prices, stock1, stock2):
 
         zscore = compute_zscore(spread)
 
-        signals = pd.Series(
-            index=zscore.index,
-            data=0
-        )
-
-        signals[zscore > 2] = -1
-        signals[zscore < -2] = 1
-        signals[abs(zscore) < 0.5] = 0
+        signals = compute_signals(zscore)
 
         spread_returns = spread.diff()
+
+        # Normalize by position notional instead of a flat constant, so
+        # returns are comparable across pairs trading at different price
+        # scales.
+        notional = (
+            y.shift(1).abs()
+            + hedge_ratio * x.shift(1).abs()
+        )
 
         strategy_returns = (
             signals.shift(1)
             * spread_returns
+            / notional
+        )
+
+        strategy_returns = (
+            strategy_returns
+            .replace([np.inf, -np.inf], np.nan)
+            .fillna(0)
         )
 
         sharpe = compute_sharpe(
@@ -62,9 +100,7 @@ def backtest_pair(prices, stock1, stock2):
 
         total_return = (
             (
-                1
-                + strategy_returns.fillna(0)
-                / 100
+                1 + strategy_returns
             ).cumprod().iloc[-1]
             - 1
         ) * 100
